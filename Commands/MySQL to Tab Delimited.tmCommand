@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/ruby -w
+
+results = STDIN.read.to_a
+results.delete_if { |l| !l.include?('|') }
+results.each { |l| l.gsub!(/^\s*\|\s*(.+?)\s*\|\s*$/, '\1') }
+results.each { |l| l.gsub!(/\s*\|\s*/, "\t") }
+
+
+print results.join("\n")</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>name</key>
+	<string>MySQL to Tab Delimited</string>
+	<key>output</key>
+	<string>replaceSelectedText</string>
+	<key>scope</key>
+	<string>text</string>
+	<key>uuid</key>
+	<string>8908CD45-B9A8-47B3-A377-389E648DDC43</string>
+</dict>
+</plist>

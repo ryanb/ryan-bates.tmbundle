@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/ruby -w
+
+# This is designed to work with a tab delimited document where
+# one column of that is delimited by commas. This will expand
+# on row into multiple rows, one for each segment of the commas.
+#
+#   From:
+#     a	b, c, d	e
+#
+#   To:
+#     a	b	e
+#     a	c	e
+#     a	d	e
+class CommaExpander
+  def initialize(text)
+    @rows = text.split("\n").map { |r| Row.new(r) }
+  end
+  
+  def resulting_rows
+    @rows.map do |row|
+      if row.contains_commas?
+        row.split_by_commas
+      else
+        row
+      end
+    end.flatten
+  end
+  
+  def result
+    resulting_rows.join("\n")
+  end
+end
+
+class Row
+  def initialize(columns = [])
+    if columns.kind_of? Array
+      @columns = columns
+    else
+      @columns = columns.split("\t")
+    end
+  end
+  
+  def contains_commas?
+    @columns.any? { |c| c.include? ',' }
+  end
+  
+  def split_by_commas
+    @columns.map do |column|
+      if column.include? ','
+        column.split(/\s*,\s*/).map do |col|
+          cols = @columns.dup
+          cols[cols.index(column)] = col
+          Row.new(cols)
+        end
+      end
+    end.flatten.compact
+  end
+  
+  def to_s
+    @columns.join("\t")
+  end
+end
+
+print CommaExpander.new(STDIN.read).result
+</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>name</key>
+	<string>Expand CVS Column</string>
+	<key>output</key>
+	<string>replaceSelectedText</string>
+	<key>scope</key>
+	<string>text</string>
+	<key>uuid</key>
+	<string>9DCC6BEB-568D-4040-AE20-8398A6054A4B</string>
+</dict>
+</plist>

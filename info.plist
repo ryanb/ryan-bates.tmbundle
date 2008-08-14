@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>mainMenu</key>
+	<dict>
+		<key>items</key>
+		<array>
+			<string>413DB6F6-6679-4FE2-9D74-C2EDAF2A61B3</string>
+			<string>8908B218-3910-458A-9215-4011CDABB871</string>
+			<string>B4636DAE-2905-434A-817F-997B2EEB8CC3</string>
+			<string>6DF7B6C7-18F5-4FFE-861B-268055307492</string>
+			<string>752A96B2-0E1D-445E-8EF6-BF0A8CD55DC6</string>
+		</array>
+		<key>submenus</key>
+		<dict>
+			<key>413DB6F6-6679-4FE2-9D74-C2EDAF2A61B3</key>
+			<dict>
+				<key>items</key>
+				<array>
+					<string>8908CD45-B9A8-47B3-A377-389E648DDC43</string>
+					<string>9DCC6BEB-568D-4040-AE20-8398A6054A4B</string>
+					<string>EB8BDD64-CB27-43D7-B173-A18A3417F916</string>
+				</array>
+				<key>name</key>
+				<string>Tab Delimited</string>
+			</dict>
+		</dict>
+	</dict>
+	<key>name</key>
+	<string>Ryan Bates</string>
+	<key>ordering</key>
+	<array>
+		<string>8908B218-3910-458A-9215-4011CDABB871</string>
+		<string>8908CD45-B9A8-47B3-A377-389E648DDC43</string>
+		<string>9DCC6BEB-568D-4040-AE20-8398A6054A4B</string>
+		<string>B4636DAE-2905-434A-817F-997B2EEB8CC3</string>
+		<string>EB8BDD64-CB27-43D7-B173-A18A3417F916</string>
+		<string>752A96B2-0E1D-445E-8EF6-BF0A8CD55DC6</string>
+	</array>
+	<key>uuid</key>
+	<string>8929EE4B-B060-454F-BC2A-70A56EF51F35</string>
+</dict>
+</plist>

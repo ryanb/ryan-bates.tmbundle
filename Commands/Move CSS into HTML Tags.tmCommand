@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/ruby -w
+
+# This takes an HTML document with CSS in &lt;head&gt; and moves
+# all the CSS into the HTML tags themselves. This is
+# fairly brute-force and has some strict requirements.
+#
+# I often use this when formating an HTML email because
+# many viewers do not like CSS in the head.
+#
+# Requirements:
+# - Double quotes must be used in id/class attributes
+# - semi-colon must be at the end of each style specification
+# - inheritence isn't fully supported
+# - elements that end in a /&gt; should have a space before the slash
+class CSSInliner
+  def initialize(content)
+    @content = content
+  end
+  
+  def css_content
+    @content[/&lt;style\b.*&gt;(.+)&lt;\/style&gt;/im, 1]
+  end
+  
+  def styles
+    styles = {}
+    css_content.scan(/\s+(.+?)\s+\{(.+?)\}/im) do |names, values|
+      names.split(', ').each do |name|
+        styles[name] ||= []
+        styles[name] += values.scan(/\s*(.+);/).flatten
+      end
+    end
+    styles
+  end
+  
+  def unique_styles
+    styles.each_value do |attributes|
+      attributes.reverse! # We want the last unique value to stay
+      attributes.uniq! { |a| a.split(':').first }
+      attributes.reverse!
+    end
+  end
+  
+  def result
+    result = @content
+    unique_styles.each do |selector, attributes|
+      result.gsub!(ElementSelector.new(selector).to_regexp) do |full_match|
+        original_element = $1
+        element = $1
+        if element =~ /style=/i
+          element.gsub!(/style="(.+?)"/i) { "style=\"#{$1}; #{attributes.join('; ')}\"" }
+        else
+          if element =~ /\/$/
+            element.insert(-3, " style=\"#{attributes.join('; ')}\"")
+          else
+            element += " style=\"#{attributes.join('; ')}\""
+          end
+        end
+        full_match.sub "&lt;#{original_element}&gt;", "&lt;#{element}&gt;"
+      end
+    end
+    result
+  end
+end
+
+
+class ElementSelector
+  def initialize(selector_str)
+    selectors = selector_str.split(' ')
+    @selector = selectors.shift
+    if selectors.empty?
+      @child = nil
+    else
+      @child = ElementSelector.new(selectors.join(' ')) unless selectors.empty?
+    end
+  end
+  
+  def to_regexp
+    /#{to_regexp_str}/im
+  end
+  
+  def to_regexp_str
+    parts = []
+    parts &lt;&lt; element
+    parts &lt;&lt; "\\sid=\"#{element_id}\"" if element_id
+    parts &lt;&lt; "\\sclass=\"#{element_class}\"" if element_class
+    if @child.nil?
+      "&lt;(#{parts.join('[^&gt;]*')}[^&gt;]*)&gt;"
+    else
+      raise "Unable to determine inheritence without full element specified." if element.nil?
+      "&lt;#{parts.join('[^&gt;]*')}[^&gt;]*&gt;.*?#{@child.to_regexp_str}.*?&lt;\\/#{element}&gt;"
+    end
+  end
+  
+  def element
+    @selector[/^([-\w]+)/i, 1]
+  end
+  
+  def element_id
+    @selector[/#([-\w]+)/i, 1]
+  end
+  
+  def element_class
+    @selector[/\.([-\w]+)/i, 1]
+  end
+end
+
+class Array
+  def uniq_with_block!   
+    result = uniq_without_block!
+    return result unless block_given?
+    hash = {}
+    each do |element|
+      key = yield(element)
+      hash[key] = element unless hash.has_key? key
+    end
+    hash.size == size ? nil : reject! { |element| hash.delete(yield(element)).nil? }
+  end
+
+  def uniq_with_block(&amp;block)
+    ary = dup
+    ary.uniq!(&amp;block)
+    ary
+  end
+
+  alias_method :uniq_without_block!, :uniq!
+  alias_method :uniq!, :uniq_with_block!
+
+  alias_method :uniq_without_block, :uniq
+  alias_method :uniq, :uniq_with_block
+end
+
+print CSSInliner.new(STDIN.read).result</string>
+	<key>input</key>
+	<string>document</string>
+	<key>name</key>
+	<string>Move CSS Into HTML Tags</string>
+	<key>output</key>
+	<string>replaceDocument</string>
+	<key>scope</key>
+	<string>text.html</string>
+	<key>uuid</key>
+	<string>8908B218-3910-458A-9215-4011CDABB871</string>
+</dict>
+</plist>

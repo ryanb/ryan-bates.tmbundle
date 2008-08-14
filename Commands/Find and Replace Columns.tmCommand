@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/ruby -w
+
+# This is designed to work with a tab delimited document where
+# you need to do a find/replace on each col &amp; row value. This is
+# useful if you're trying to import database records and need to
+# match up names with id numbers.
+#
+# To get this to work, you need to copy a "key" into your pasteboard.
+# The first column is the replacement text, and every column after that
+# is the find text. It does an exact match.
+#
+#   Pasteboard:
+#     1	apple	apples
+#     2	banana	naner
+#
+#   Given:
+#     apple	naner
+#     apples	bananana
+#     appleish	banana
+#
+#   Result:
+#     1	2
+#     1	bananana
+#     applish	2
+class MultiReplace
+  def initialize(pattern)
+    @pattern = {}
+    pattern.split("\n").each do |row|
+      row = row.split("\t")
+      matcher = row.first
+      row.each do |column|
+        @pattern[column] = matcher unless column == matcher
+      end
+    end
+  end
+  
+  def replace(text)
+    rows = text.split("\n").map { |r| r.split("\t") }
+    rows.map do |row|
+      row.map do |column|
+        @pattern[column] || column
+      end.join("\t")
+    end.join("\n")
+  end
+end
+
+print MultiReplace.new(`pbpaste`).replace(STDIN.read)
+</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>name</key>
+	<string>Find and Replace Columns</string>
+	<key>output</key>
+	<string>replaceSelectedText</string>
+	<key>scope</key>
+	<string>text</string>
+	<key>uuid</key>
+	<string>EB8BDD64-CB27-43D7-B173-A18A3417F916</string>
+</dict>
+</plist>

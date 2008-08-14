@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/bin/sh
+/usr/bin/osascript &gt; /dev/null &lt;&lt;EOS
+	set stdin to "$(cat | sed -e 's/\\/\\\\/g' -e 's/\"/\\\"/g')"
+	tell application "Adobe After Effects CS3" 
+		activate 
+		DoScript stdin 
+	end tell
+EOS
+</string>
+	<key>input</key>
+	<string>document</string>
+	<key>keyEquivalent</key>
+	<string>@r</string>
+	<key>name</key>
+	<string>Run AE Script</string>
+	<key>output</key>
+	<string>discard</string>
+	<key>scope</key>
+	<string>source.js</string>
+	<key>uuid</key>
+	<string>752A96B2-0E1D-445E-8EF6-BF0A8CD55DC6</string>
+</dict>
+</plist>
